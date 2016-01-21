@@ -1,0 +1,29 @@
+import datetime as dt
+import os
+from time import sleep
+import random
+
+listofvalues = [];
+
+raw_input("Press Enter to continue.") 
+
+index=0
+starttime=dt.datetime.now()
+for num in range(50):
+    index=index+1
+    val=random.randrange(0, 10, 2)
+    endtime=dt.datetime.now()
+    timestamp= (endtime-starttime).seconds*1000+(endtime-starttime).microseconds/1000
+    listofvalues.insert(index, [str(val),str(timestamp)])
+    #print str(val)+","+str(timestamp)
+    sleep(0.2)
+
+
+raw_input("Press Enter to continue.") 
+import csv 
+csvfile = "log.csv"
+with open(csvfile, "w") as csvfile:
+    writer = csv.writer(csvfile, delimiter = ',', lineterminator='\n') 
+    writer.writerows(listofvalues) 
+print listofvalues
+ 
