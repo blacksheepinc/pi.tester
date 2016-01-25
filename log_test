@@ -3,27 +3,32 @@ import os
 from time import sleep
 import random
 
-listofvalues = [];
+## Export a list of values to a CSV file
+## Usage: testtype: means what kind of test, part of the final filename
+##        valuelist: name of the list 
+def exportcsv(testtype, valuelist):
+    import csv 
+    now= dt.datetime.now()
+    filename = now.strftime("%Y-%m-%d_%H:%M:%S")+'_'+str(testtype)+'.csv' 
+    with open(filename, "w") as filename:
+        writer = csv.writer(filename, delimiter = ',', lineterminator='\n') 
+        writer.writerows(valuelist) 
+    filename.close()
 
 raw_input("Press Enter to continue.") 
 
-index=0
+compressionvalues = [["Compression value(bar)", "Delta T (microsecond)"]];
+index=1 #order of value in the list
 starttime=dt.datetime.now()
 for num in range(50):
     index=index+1
-    val=random.randrange(0, 10, 2)
+    measuredvalue=random.randrange(0, 10, 2)
     endtime=dt.datetime.now()
     timestamp= (endtime-starttime).seconds*1000+(endtime-starttime).microseconds/1000
-    listofvalues.insert(index, [str(val),str(timestamp)])
-    #print str(val)+","+str(timestamp)
+    compressionvalues.insert(index, [str(measuredvalue),str(timestamp)])
     sleep(0.2)
 
-
 raw_input("Press Enter to continue.") 
-import csv 
-csvfile = "log.csv"
-with open(csvfile, "w") as csvfile:
-    writer = csv.writer(csvfile, delimiter = ',', lineterminator='\n') 
-    writer.writerows(listofvalues) 
+exportcsv("compression", compressionvalues)
 print listofvalues
  
