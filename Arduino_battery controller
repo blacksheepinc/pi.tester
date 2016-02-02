@@ -23,7 +23,7 @@ const int led2Pin = 2; // the number of the LED2 pin
 const int led3Pin = 3; // the number of the LED3 pin
 const int relay1 = 7; // Relay1 pin
 const int relay2 = 6; // Relay2 pin
-const int peaksignal = 0; // Peak signal pin
+const int peaksignal = 4; // Peak signal pin
 const int chargerstart = 11; // Charger start button
 const int chargerstop = 12; // Charger stop button
 
