@@ -47,8 +47,8 @@ void loop()
 {
     digitalWrite(relay1, LOW);
     digitalWrite(relay2, LOW);
-    digitalWrite(chargerstart, LOW);
-    digitalWrite(chargerstop, LOW);
+    digitalWrite(chargerstart, HIGH);
+    digitalWrite(chargerstop, HIGH);
 	// get the state of the pushbutton
 	startbuttonstate = digitalRead(startbutton);
 	// is the button pressed?
@@ -57,55 +57,55 @@ void loop()
 	{
 		// START OF STAGE 1
 		delay(500);
-		digitalWrite(chargerstart, HIGH); //turn on charger
-		delay(500);
-		digitalWrite(chargerstart, LOW);
+		digitalWrite(chargerstart, LOW); //turn on charger
+		delay(1500);
+		digitalWrite(chargerstart, HIGH);
 
 		digitalWrite(led1Pin, HIGH); //turn on led1
 
-		while(digitalRead(peaksignal) == LOW) { }; //WAIT FOR PEAK SIGNAL
+		while(digitalRead(peaksignal) == HIGH) { }; //WAIT FOR PEAK SIGNAL
 		delay(1000);
-		digitalWrite(chargerstop, HIGH); //turn off charger
+		digitalWrite(chargerstop, LOW); //turn off charger
 		delay(500);
-		digitalWrite(chargerstop, LOW);
+		digitalWrite(chargerstop, HIGH);
 		digitalWrite(led1Pin, LOW); //turn off led1
 		delay(1000);
 		//END OF STAGE 1
 
 		// START OF STAGE 2
-		digitalWrite(relay1, HIGH);  //SWITCH RELAY 1
-		delay(500);
-		digitalWrite(chargerstart, HIGH); //turn on charger
-		delay(500);
-		digitalWrite(chargerstart, LOW);
+		//digitalWrite(relay1, HIGH);  //SWITCH RELAY 1
+		//delay(500);
+		//digitalWrite(chargerstart, HIGH); //turn on charger
+		//delay(500);
+		//digitalWrite(chargerstart, LOW);
 
-		digitalWrite(led1Pin, HIGH); //turn on led1
-		digitalWrite(led2Pin, HIGH); //turn on led2
-		while(digitalRead(peaksignal) == LOW) { }; //WAIT FOR PEAK SIGNAL
-		delay(1000);
-		digitalWrite(chargerstop, HIGH); //turn off charger
-		delay(500);
-		digitalWrite(chargerstop, LOW);
-		digitalWrite(led1Pin, LOW); //turn off led1
-		digitalWrite(led2Pin, LOW); //turn off led2
-		delay(1000);
+		//digitalWrite(led1Pin, HIGH); //turn on led1
+		//digitalWrite(led2Pin, HIGH); //turn on led2
+		//while(digitalRead(peaksignal) == LOW) { }; //WAIT FOR PEAK SIGNAL
+		//delay(1000);
+		//digitalWrite(chargerstop, HIGH); //turn off charger
+		//delay(500);
+		//digitalWrite(chargerstop, LOW);
+		//digitalWrite(led1Pin, LOW); //turn off led1
+		//digitalWrite(led2Pin, LOW); //turn off led2
+		//delay(1000);
 		//END OF STAGE 2
 
         // START OF STAGE 3
 		digitalWrite(relay2, HIGH);  //SWITCH RELAY 2
 		delay(500);
-		digitalWrite(chargerstart, HIGH); //turn on charger
-		delay(500);
-		digitalWrite(chargerstart, LOW);
+		digitalWrite(chargerstart, LOW); //turn on charger
+		delay(1500);
+		digitalWrite(chargerstart, HIGH);
 
 		digitalWrite(led1Pin, HIGH); //turn on led1
 		digitalWrite(led2Pin, HIGH); //turn on led2
         digitalWrite(led3Pin, HIGH); //turn on led3
-		while(digitalRead(peaksignal) == LOW) { }; //WAIT FOR PEAK SIGNAL
+		while(digitalRead(peaksignal) == HIGH) { }; //WAIT FOR PEAK SIGNAL
 		delay(1000);
-		digitalWrite(chargerstop, HIGH); //turn off charger
+		digitalWrite(chargerstop, LOW); //turn off charger
 		delay(500);
-		digitalWrite(chargerstop, LOW);
+		digitalWrite(chargerstop, HIGH);
 		digitalWrite(led1Pin, LOW); //turn off led1
 		digitalWrite(led2Pin, LOW); //turn off led2
         digitalWrite(led3Pin, LOW); //turn off led3
