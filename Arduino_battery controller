@@ -13,7 +13,7 @@
 //      \|_______| \|__| \|__| \|_______| \|__| \|__| \|__| \|_______| \|_______| \|__|\|__| \|__| \|__| \|__| \|_______|
 
 //CHARGER CONTROLLER FOR ELECTRIC MOTORBIKES with multiple battery packs.
-//Version 0.1
+//Version 0.1b
 //Made by Mark MESZAROS, 2016
 
 // Constants used to set pin numbers
@@ -58,7 +58,7 @@ void loop()
 		// START OF STAGE 1
 		delay(500);
 		digitalWrite(chargerstart, LOW); //turn on charger
-		delay(1500);
+		delay(2000);
 		digitalWrite(chargerstart, HIGH);
 
 		digitalWrite(led1Pin, HIGH); //turn on led1
@@ -95,7 +95,7 @@ void loop()
 		digitalWrite(relay2, HIGH);  //SWITCH RELAY 2
 		delay(500);
 		digitalWrite(chargerstart, LOW); //turn on charger
-		delay(1500);
+		delay(2000);
 		digitalWrite(chargerstart, HIGH);
 
 		digitalWrite(led1Pin, HIGH); //turn on led1
