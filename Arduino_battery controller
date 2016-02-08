@@ -13,7 +13,7 @@
 //      \|_______| \|__| \|__| \|_______| \|__| \|__| \|__| \|_______| \|_______| \|__|\|__| \|__| \|__| \|__| \|_______|
 
 //CHARGER CONTROLLER FOR ELECTRIC MOTORBIKES with multiple battery packs.
-//Version 0.1b
+//Version 0.2
 //Made by Mark MESZAROS, 2016
 
 // Constants used to set pin numbers
@@ -21,144 +21,12 @@ const int startbutton = 10; // the number of the startbutton pin
 const int led1Pin = 1; // the number of the LED1 pin
 const int led2Pin = 2; // the number of the LED2 pin
 const int led3Pin = 3; // the number of the LED3 pin
-const int relay1 = 7; // Relay1 pin
-const int relay2 = 6; // Relay2 pin
-const int peaksignal = 4; // Peak signal pin
-const int chargerstart = 11; // Charger start button
-const int chargerstop = 12; // Charger stop button
-
-// variables
-int startbuttonstate = 0; // variable the startbutton status
-
-void setup()
-{
-	pinMode(startbutton, INPUT); // set the startbutton mode to INPUT
-	pinMode(led1Pin, OUTPUT);  // set the led1Pin mode to OUTPUT
-	pinMode(led2Pin, OUTPUT);  // set the led2Pin mode to OUTPUT
-	pinMode(led3Pin, OUTPUT);  // set the led3Pin mode to OUTPUT
-	pinMode(relay1, OUTPUT);  // set the relay1 mode to OUTPUT
-	pinMode(relay2, OUTPUT);  // set the relay2 mode to OUTPUT
-	pinMode(peaksignal, INPUT); // set the peaksignal mode to INPUT
-	pinMode(chargerstart, OUTPUT);  // set the chargerstart mode to OUTPUT
-	pinMode(chargerstop, OUTPUT);  // set the chargestop mode to OUTPUT
-}
-
-void loop()
-{
-    digitalWrite(relay1, LOW);
-    digitalWrite(relay2, LOW);
-    digitalWrite(chargerstart, HIGH);
-    digitalWrite(chargerstop, HIGH);
-	// get the state of the pushbutton
-	startbuttonstate = digitalRead(startbutton);
-	// is the button pressed?
-	// if it is, the startbuttonstate is HIGH:
-	if (startbuttonstate == HIGH)
-	{
-		// START OF STAGE 1
-		delay(500);
-		digitalWrite(chargerstart, LOW); //turn on charger
-		delay(2000);
-		digitalWrite(chargerstart, HIGH);
-
-		digitalWrite(led1Pin, HIGH); //turn on led1
-
-		while(digitalRead(peaksignal) == HIGH) { }; //WAIT FOR PEAK SIGNAL
-		delay(1000);
-		digitalWrite(chargerstop, LOW); //turn off charger
-		delay(500);
-		digitalWrite(chargerstop, HIGH);
-		digitalWrite(led1Pin, LOW); //turn off led1
-		delay(1000);
-		//END OF STAGE 1
-
-		// START OF STAGE 2
-		//digitalWrite(relay1, HIGH);  //SWITCH RELAY 1
-		//delay(500);
-		//digitalWrite(chargerstart, HIGH); //turn on charger
-		//delay(500);
-		//digitalWrite(chargerstart, LOW);
-
-		//digitalWrite(led1Pin, HIGH); //turn on led1
-		//digitalWrite(led2Pin, HIGH); //turn on led2
-		//while(digitalRead(peaksignal) == LOW) { }; //WAIT FOR PEAK SIGNAL
-		//delay(1000);
-		//digitalWrite(chargerstop, HIGH); //turn off charger
-		//delay(500);
-		//digitalWrite(chargerstop, LOW);
-		//digitalWrite(led1Pin, LOW); //turn off led1
-		//digitalWrite(led2Pin, LOW); //turn off led2
-		//delay(1000);
-		//END OF STAGE 2
-
-        // START OF STAGE 3
-		digitalWrite(relay2, HIGH);  //SWITCH RELAY 2
-		delay(500);
-		digitalWrite(chargerstart, LOW); //turn on charger
-		delay(2000);
-		digitalWrite(chargerstart, HIGH);
-
-		digitalWrite(led1Pin, HIGH); //turn on led1
-		digitalWrite(led2Pin, HIGH); //turn on led2
-        digitalWrite(led3Pin, HIGH); //turn on led3
-		while(digitalRead(peaksignal) == HIGH) { }; //WAIT FOR PEAK SIGNAL
-		delay(1000);
-		digitalWrite(chargerstop, LOW); //turn off charger
-		delay(500);
-		digitalWrite(chargerstop, HIGH);
-		digitalWrite(led1Pin, LOW); //turn off led1
-		digitalWrite(led2Pin, LOW); //turn off led2
-        digitalWrite(led3Pin, LOW); //turn off led3
-		delay(1000);
-		//END OF STAGE 3
-        
-        //FINISHED CHARGING, RESETTING RELAYS
-        digitalWrite(relay1, LOW);
-        digitalWrite(relay2, LOW);
-	}
-	else
-	{
-		// turn LEDs on:
-		digitalWrite(led1Pin, HIGH);
-		digitalWrite(led2Pin, HIGH);
-		digitalWrite(led3Pin, HIGH);
-		delay(1000);
-		// turn LEDs off:
-		digitalWrite(led1Pin, LOW);
-		digitalWrite(led2Pin, LOW);
-		digitalWrite(led3Pin, LOW);
-	}
-
-	delay(500); // pause for 1/2 a second
-}
-
-//   ________  ___  ___         ___   ___   ___                                                                          
-//  |\  _____\|\  \|\  \       |\  \ |\  \ |\  \                                                                         
-//  \ \  \__/ \ \  \\\  \      \ \  \\ \  \\ \  \                                                                        
-//   \ \   __\ \ \  \\\  \   __ \ \  \\ \  \\ \  \                                                                       
-//    \ \  \_|  \ \  \\\  \ |\  \\_\  \\ \  \\ \  \                                                                      
-//     \ \__\    \ \_______\\ \________\\ \__\\ \__\                                                                     
-//   ___\|__|   __\|_______|_\|________|_\|__|_\|__|_    _______    _______    ________   ___   ________    ________     
-//  |\  ___ \  |\   ___  \ |\   ____\ |\  \ |\   ___  \ |\  ___ \  |\  ___ \  |\   __  \ |\  \ |\   ___  \ |\   ____\    
-//  \ \   __/| \ \  \\ \  \\ \  \___| \ \  \\ \  \\ \  \\ \   __/| \ \   __/| \ \  \|\  \\ \  \\ \  \\ \  \\ \  \___|    
-//   \ \  \_|/__\ \  \\ \  \\ \  \  ___\ \  \\ \  \\ \  \\ \  \_|/__\ \  \_|/__\ \   _  _\\ \  \\ \  \\ \  \\ \  \  ___  
-//    \ \  \_|\ \\ \  \\ \  \\ \  \|\  \\ \  \\ \  \\ \  \\ \  \_|\ \\ \  \_|\ \\ \  \\  \|\ \  \\ \  \\ \  \\ \  \|\  \ 
-//     \ \_______\\ \__\\ \__\\ \_______\\ \__\\ \__\\ \__\\ \_______\\ \_______\\ \__\\ _\ \ \__\\ \__\\ \__\\ \_______\
-//      \|_______| \|__| \|__| \|_______| \|__| \|__| \|__| \|_______| \|_______| \|__|\|__| \|__| \|__| \|__| \|_______|
-
-//CHARGER CONTROLLER FOR ELECTRIC MOTORBIKES with multiple battery packs.
-//Version 0.1b
-//Made by Mark MESZAROS, 2016
-
-// Constants used to set pin numbers
-const int startbutton = 10; // the number of the startbutton pin
-const int led1Pin = 1; // the number of the LED1 pin
-const int led2Pin = 2; // the number of the LED2 pin
-const int led3Pin = 3; // the number of the LED3 pin
-const int relay1 = 7; // Relay1 pin
-const int relay2 = 6; // Relay2 pin
-const int peaksignal = 4; // Peak signal pin
-const int chargerstart = 11; // Charger start button
+const int relay1 = 4; // Relay1 pin
+const int relay2 = 5; // Relay2 pin
+const int relay3 = 6; // Relay3 pin
+const int relay4 = 7; // Relay4 pin
+const int peaksignal = 9; // Peak signal pin
+const int chargerstart = 1; // Charger start button
 const int chargerstop = 12; // Charger stop button
 
 // variables
@@ -172,6 +40,8 @@ void setup()
   pinMode(led3Pin, OUTPUT);  // set the led3Pin mode to OUTPUT
   pinMode(relay1, OUTPUT);  // set the relay1 mode to OUTPUT
   pinMode(relay2, OUTPUT);  // set the relay2 mode to OUTPUT
+  pinMode(relay3, OUTPUT);  // set the relay3 mode to OUTPUT
+  pinMode(relay4, OUTPUT);  // set the relay4 mode to OUTPUT
   pinMode(peaksignal, INPUT); // set the peaksignal mode to INPUT
   pinMode(chargerstart, OUTPUT);  // set the chargerstart mode to OUTPUT
   pinMode(chargerstop, OUTPUT);  // set the chargestop mode to OUTPUT
@@ -179,10 +49,14 @@ void setup()
 
 void loop()
 {
-    digitalWrite(relay1, LOW);
-    digitalWrite(relay2, LOW);
-    digitalWrite(chargerstart, HIGH);
-    digitalWrite(chargerstop, HIGH);
+    digitalWrite(relay1, LOW); // make sure all the relays are resetted
+    digitalWrite(relay2, LOW); // make sure all the relays are resetted
+    digitalWrite(relay3, LOW); // make sure all the relays are resetted
+    digitalWrite(relay4, LOW); // make sure all the relays are resetted
+    
+    digitalWrite(chargerstart, HIGH); // reset control button states
+    digitalWrite(chargerstop, HIGH); // reset control button states
+    
   // get the state of the pushbutton
   startbuttonstate = digitalRead(startbutton);
   // is the button pressed?
@@ -191,56 +65,65 @@ void loop()
   {
     // START OF STAGE 1
     delay(500);
-    digitalWrite(chargerstart, LOW); //turn on charger
+    digitalWrite(chargerstart, LOW); //start charger LONG PUSH
     delay(2000);
-    digitalWrite(chargerstart, HIGH);
+    digitalWrite(chargerstart, HIGH); //release button
     delay(4000);
-    digitalWrite(chargerstart, LOW); //confirm okay
+    digitalWrite(chargerstart, LOW); //confirm okay SHORT PUSH
     delay(500);
-    digitalWrite(chargerstart, HIGH);
+    digitalWrite(chargerstart, HIGH); //release button
     
     digitalWrite(led1Pin, HIGH); //turn on led1
     delay(2000);
     
     while(digitalRead(peaksignal) == HIGH) { }; //WAIT FOR PEAK SIGNAL
     delay(2000);
-    digitalWrite(chargerstop, LOW); //turn off charger
+    digitalWrite(chargerstop, LOW); //turn off charger SHORT PUSH
     delay(500);
-    digitalWrite(chargerstop, HIGH);
+    digitalWrite(chargerstop, HIGH); //release button
+    
     digitalWrite(led1Pin, LOW); //turn off led1
     delay(1000);
     //END OF STAGE 1
-
+    
     // START OF STAGE 2
-    //digitalWrite(relay1, HIGH);  //SWITCH RELAY 1
-    //delay(500);
-    //digitalWrite(chargerstart, HIGH); //turn on charger
-    //delay(500);
-    //digitalWrite(chargerstart, LOW);
-
-    //digitalWrite(led1Pin, HIGH); //turn on led1
-    //digitalWrite(led2Pin, HIGH); //turn on led2
-    //while(digitalRead(peaksignal) == LOW) { }; //WAIT FOR PEAK SIGNAL
-    //delay(1000);
-    //digitalWrite(chargerstop, HIGH); //turn off charger
-    //delay(500);
-    //digitalWrite(chargerstop, LOW);
-    //digitalWrite(led1Pin, LOW); //turn off led1
-    //digitalWrite(led2Pin, LOW); //turn off led2
-    //delay(1000);
-    //END OF STAGE 2
-
-        // START OF STAGE 3
     digitalWrite(relay1, HIGH);  //SWITCH RELAY 1   
     digitalWrite(relay2, HIGH);  //SWITCH RELAY 2
     delay(500);
-    digitalWrite(chargerstart, LOW); //turn on charger
+    digitalWrite(chargerstart, LOW); //start charger LONG PUSH
     delay(2000);
-    digitalWrite(chargerstart, HIGH);
+    digitalWrite(chargerstart, HIGH); //release button
     delay(4000);
-    digitalWrite(chargerstart, LOW); //confirm okay
+    digitalWrite(chargerstart, LOW); //confirm okay SHORT PUSH
     delay(500);
-    digitalWrite(chargerstart, HIGH);
+    digitalWrite(chargerstart, HIGH); //release button
+    
+    digitalWrite(led1Pin, HIGH); //turn on led1
+    digitalWrite(led2Pin, HIGH); //turn on led2
+    delay(2000);
+    
+    while(digitalRead(peaksignal) == HIGH) { }; //WAIT FOR PEAK SIGNAL
+    delay(2000);
+    digitalWrite(chargerstop, LOW); //turn off charger SHORT PUSH
+    delay(500);
+    digitalWrite(chargerstop, HIGH); //release button
+    
+    digitalWrite(led1Pin, LOW); //turn off led1
+    delay(1000);
+    //END OF STAGE 2
+
+
+    // START OF STAGE 3
+    digitalWrite(relay3, HIGH);  //SWITCH RELAY 3   
+    digitalWrite(relay4, HIGH);  //SWITCH RELAY 4
+    delay(500);
+    digitalWrite(chargerstart, LOW); //start charger LONG PUSH
+    delay(2000);
+    digitalWrite(chargerstart, HIGH); //release button
+    delay(4000);
+    digitalWrite(chargerstart, LOW); //confirm okay SHORT PUSH
+    delay(500);
+    digitalWrite(chargerstart, HIGH); //release button
 
     digitalWrite(led1Pin, HIGH); //turn on led1
     digitalWrite(led2Pin, HIGH); //turn on led2
@@ -249,21 +132,24 @@ void loop()
     
     while(digitalRead(peaksignal) == HIGH) { }; //WAIT FOR PEAK SIGNAL
     delay(2000);
-    digitalWrite(chargerstop, LOW); //turn off charger
+    digitalWrite(chargerstop, LOW); //turn off charger SHORT PUSH
     delay(500);
-    digitalWrite(chargerstop, HIGH);
+    digitalWrite(chargerstop, HIGH); //release button
     digitalWrite(led1Pin, LOW); //turn off led1
     digitalWrite(led2Pin, LOW); //turn off led2
-        digitalWrite(led3Pin, LOW); //turn off led3
+    digitalWrite(led3Pin, LOW); //turn off led3
     delay(1000);
     //END OF STAGE 3
         
         //FINISHED CHARGING, RESETTING RELAYS
         digitalWrite(relay1, LOW);
-        digitalWrite(relay2, LOW);
+    	digitalWrite(relay2, LOW);
+    	digitalWrite(relay3, LOW);
+    	digitalWrite(relay4, LOW);
   }
   else
   {
+    // THIS IS THE STAND BY MODE ----> BLINKING LEDs
     // turn LEDs on:
     digitalWrite(led1Pin, HIGH);
     digitalWrite(led2Pin, HIGH);
