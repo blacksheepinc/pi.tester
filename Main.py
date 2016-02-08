@@ -1,14 +1,36 @@
-#!/usr/bin/python
-##
-## Menu system
-## 
-## Menu is list of menu items with following format :
-## [reference to parent entry identifier,
-##  menu entry display title, 
-##  positive integer identifier (free choice) if entry goes to submenu if selected OR
-##  string with action to be returned when entry is selected]
-##
-##
+"""
+!/usr/bin/python
+  _____                                _                           
+ / ___/__  __ _  ___  _______ ___ ___ (_)__  ___                   
+/ /__/ _ \/  ' \/ _ \/ __/ -_|_-<(_-</ / _ \/ _ \                  
+\___/\___/_/_/_/ .__/_/  \__/___/___/_/\___/_//_/                  
+  ____        /_/                                                  
+ / __/___                                                          
+ > _/_ _/                                                          
+|_____/                                                            
+  _      ___    __    __                __  __          __         
+ | | /| / (_)__/ /__ / /  ___ ____  ___/ / / /____ ___ / /____ ____
+ | |/ |/ / / _  / -_) _ \/ _ `/ _ \/ _  / / __/ -_|_-</ __/ -_) __/
+ |__/|__/_/\_,_/\__/_.__/\_,_/_//_/\_,_/  \__/\__/___/\__/\__/_/   
+                                                                   
+ Compression and Wideband tester for Raspberry with USB serial connected with Arduino (UNO)
+ Can export to .csv then visualize via graph.
+ 
+ Made by Mark Meszaros, 2016.
+ Ver. 0.2
+ 
+"""
+
+import os
+import time
+from time import sleep
+import datetime as dt
+import random
+
+#Measuring units
+displayformat= ["kPa", "bar", "AFR", "lambda"]
+p_format= 0 #default  0 means kPa
+w_format= 2 #default 2 means AFR
 
 ## Pin config , GPIO layout ##
 #INPUTS
@@ -19,7 +41,27 @@ raw_press_signal = 1 #Gpioxx Analog
 raw_wideband_signal = 1 #Gpioxx Analog
 #OUTPUTS
 
-# Definition for replace lines in settting file
+## Exports a list of values to a CSV file
+## Usage: testtype: means what kind of test, part of the final filename "compression" or "wideband"
+##        valuelist: name of the list 
+def exportcsv(testtype, valuelist):
+    import csv 
+    now= dt.datetime.now()
+    filename = now.strftime("%Y-%m-%d_%H:%M:%S")+'_'+str(testtype)+'.csv' 
+    with open(filename, "w") as filename:
+        writer = csv.writer(filename, delimiter = ',', lineterminator='\n') 
+        writer.writerows(valuelist) 
+    filename.close()
+    
+## ADJUSTING VALUES TO THE CORRESPONDING UNIT
+## Pressure unit (kpa=0, bar=1)
+def adjustvalues(valuelist):
+    if p_format == 0 : adjustvalue = (1200/920.7) ##kpa
+    elif p_format == 1 : adjustvalue = ((1200/920.7)/100) ##bar
+    for item in valuelist[1:]:
+        item[0] = round((item[0] * adjustvalue),2)
+
+# Definition for replace lines in setting file
 def replace_line(file_name, line_num, text):
     lines = open(file_name, 'r').readlines()
     lines[line_num] = text
@@ -27,25 +69,19 @@ def replace_line(file_name, line_num, text):
     out.writelines(lines)
     out.close() 
 
-#Measuring units
-displayformat= ["kPa", "bar", "AFR", "lambda"]
-o_format= 0 #default  0 means kPa
-w_format= 2 #default 2 means AFR
-
 #Get the units from settings file
 file_path = 'settings.dat' 
-import os
 if os.path.exists(file_path):
     a1 = []
     with open(file_path, 'r+') as file:
         for line in file:
             data = line.split()
             a1.append(int(data[0]))
-    o_format= a1[0]
+    p_format= a1[0]
     w_format= a1[1]
 else:
     with open(file_path, 'w+') as file:
-        file.write(str(o_format)+" <--Wideband format:"+displayformat[o_format]) #default kPa
+        file.write(str(p_format)+" <--Wideband format:"+displayformat[p_format]) #default kPa
         file.write("\n")
         file.write(str(w_format)+" <--Compression format:"+displayformat[w_format]) #default AFR
         file.write("\n")
@@ -134,7 +170,7 @@ class menu :
         print str(self.niveau)+":"+self._menu[parent][2]
         print self._menu[pos][2],
         if self._menu[pos][3] == "pressureformat":
-            print displayformat[o_format]
+            print displayformat[p_format]
         if self._menu[pos][3] == "wideformat":
             print displayformat[w_format]
 
@@ -210,8 +246,7 @@ class menu :
         self.niveau -=1
         return True
      
-   
-import time
+
 def signaltester(test_type):
     if test_type== "pressure":
         signal= raw_press_signal
@@ -257,12 +292,12 @@ if __name__ == "__main__":
             s=m.select()
             if s :
                 if s == -1 : break
-                if s == "changepressure" and o_format == 0:
-                    o_format= 1
-                    replace_line(file_path, 0, str(o_format)+" <--Wideband format:"+displayformat[o_format]+"\n")
-                elif s == "changepressure" and o_format == 1:
-                    o_format= 0
-                    replace_line(file_path, 0, str(o_format)+" <--Wideband format:"+displayformat[o_format]+"\n")
+                if s == "changepressure" and p_format == 0:
+                    p_format= 1
+                    replace_line(file_path, 0, str(p_format)+" <--Wideband format:"+displayformat[p_format]+"\n")
+                elif s == "changepressure" and p_format == 1:
+                    p_format= 0
+                    replace_line(file_path, 0, str(p_format)+" <--Wideband format:"+displayformat[p_format]+"\n")
                 if s == "changewideband" and w_format == 2:
                     w_format= 3
                     replace_line(file_path, 1, str(w_format)+" <--Compression format:"+displayformat[w_format]+"\n")
@@ -270,9 +305,37 @@ if __name__ == "__main__":
                     w_format= 2
                     replace_line(file_path, 1, str(w_format)+" <--Compression format:"+displayformat[w_format]+"\n")
                 action=m.action()
-        if action== Menu[3][2]:#Run the tester
+        if action== Menu[3][2]:#Run the compression tester
             signaltester("pressure")
             pressurecalibration()
+            startersignal = 0
+            print "Waiting for crank the engine..."
+            while startersignal < 0.9:
+                startersignal = random.random() ##simulating starter motor signal
+                ##read starter signal
+                time.sleep(0.2)
+            os.system("clear")
+            print "Testing in progress..."
+            compressionvalues = [["Compression value("+displayformat[p_format]+")", "Delta T (microsecond)"]];
+            index=1 #order of value in the list
+            starttime=dt.datetime.now()
+            startersignal = 0.2 ##simulation delete later
+            while startersignal > 0.1:
+                index=index+1
+                ##rawvalue=random.randrange(0, 1023, 2) ##simulating the sensor signal
+                rawvalue=100
+                ##read raw_press_signal
+                endtime=dt.datetime.now()
+                timestamp= (endtime-starttime).seconds*1000+(endtime-starttime).microseconds/1000
+                compressionvalues.insert(index, [int(rawvalue),int(timestamp)])
+                startersignal = random.random() ##simulating starter motor signal
+                ##read starter signal
+                sleep(0.2)
+            adjustvalues(compressionvalues)
+            exportcsv("compression", compressionvalues)
+            raw_input("Press Enter to continue.") 
+            print "Compression testing finished, file saved"
+            sleep(2)
         if action== Menu[4][2]:#Show current compression value
             signaltester("pressure")
             pressurecalibration()
