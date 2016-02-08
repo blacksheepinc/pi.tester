@@ -1,20 +1,21 @@
-//   ________  ___  ___         ___   ___   ___                                                                          
-//  |\  _____\|\  \|\  \       |\  \ |\  \ |\  \                                                                         
-//  \ \  \__/ \ \  \\\  \      \ \  \\ \  \\ \  \                                                                        
-//   \ \   __\ \ \  \\\  \   __ \ \  \\ \  \\ \  \                                                                       
-//    \ \  \_|  \ \  \\\  \ |\  \\_\  \\ \  \\ \  \                                                                      
-//     \ \__\    \ \_______\\ \________\\ \__\\ \__\                                                                     
-//   ___\|__|   __\|_______|_\|________|_\|__|_\|__|_    _______    _______    ________   ___   ________    ________     
-//  |\  ___ \  |\   ___  \ |\   ____\ |\  \ |\   ___  \ |\  ___ \  |\  ___ \  |\   __  \ |\  \ |\   ___  \ |\   ____\    
-//  \ \   __/| \ \  \\ \  \\ \  \___| \ \  \\ \  \\ \  \\ \   __/| \ \   __/| \ \  \|\  \\ \  \\ \  \\ \  \\ \  \___|    
-//   \ \  \_|/__\ \  \\ \  \\ \  \  ___\ \  \\ \  \\ \  \\ \  \_|/__\ \  \_|/__\ \   _  _\\ \  \\ \  \\ \  \\ \  \  ___  
-//    \ \  \_|\ \\ \  \\ \  \\ \  \|\  \\ \  \\ \  \\ \  \\ \  \_|\ \\ \  \_|\ \\ \  \\  \|\ \  \\ \  \\ \  \\ \  \|\  \ 
-//     \ \_______\\ \__\\ \__\\ \_______\\ \__\\ \__\\ \__\\ \_______\\ \_______\\ \__\\ _\ \ \__\\ \__\\ \__\\ \_______\
-//      \|_______| \|__| \|__| \|_______| \|__| \|__| \|__| \|_______| \|_______| \|__|\|__| \|__| \|__| \|__| \|_______|
+/* ________  ___  ___         ___   ___   ___                                                                          
+  |\  _____\|\  \|\  \       |\  \ |\  \ |\  \                                                                         
+  \ \  \__/ \ \  \\\  \      \ \  \\ \  \\ \  \                                                                        
+   \ \   __\ \ \  \\\  \   __ \ \  \\ \  \\ \  \                                                                       
+    \ \  \_|  \ \  \\\  \ |\  \\_\  \\ \  \\ \  \                                                                      
+     \ \__\    \ \_______\\ \________\\ \__\\ \__\                                                                     
+   ___\|__|   __\|_______|_\|________|_\|__|_\|__|_    _______    _______    ________   ___   ________    ________     
+  |\  ___ \  |\   ___  \ |\   ____\ |\  \ |\   ___  \ |\  ___ \  |\  ___ \  |\   __  \ |\  \ |\   ___  \ |\   ____\    
+  \ \   __/| \ \  \\ \  \\ \  \___| \ \  \\ \  \\ \  \\ \   __/| \ \   __/| \ \  \|\  \\ \  \\ \  \\ \  \\ \  \___|    
+   \ \  \_|/__\ \  \\ \  \\ \  \  ___\ \  \\ \  \\ \  \\ \  \_|/__\ \  \_|/__\ \   _  _\\ \  \\ \  \\ \  \\ \  \  ___  
+    \ \  \_|\ \\ \  \\ \  \\ \  \|\  \\ \  \\ \  \\ \  \\ \  \_|\ \\ \  \_|\ \\ \  \\  \|\ \  \\ \  \\ \  \\ \  \|\  \ 
+     \ \_______\\ \__\\ \__\\ \_______\\ \__\\ \__\\ \__\\ \_______\\ \_______\\ \__\\ _\ \ \__\\ \__\\ \__\\ \_______\
+      \|_______| \|__| \|__| \|_______| \|__| \|__| \|__| \|_______| \|_______| \|__|\|__| \|__| \|__| \|__| \|_______|
 
-//CHARGER CONTROLLER FOR ELECTRIC MOTORBIKES with multiple battery packs.
-//Version 0.2
-//Made by Mark MESZAROS, 2016
+CHARGER CONTROLLER FOR ELECTRIC MOTORBIKES with multiple battery packs.
+Version 0.2b
+Made by Mark MESZAROS, 2016
+*/
 
 // Constants used to set pin numbers
 const int startbutton = 10; // the number of the startbutton pin
@@ -26,7 +27,7 @@ const int relay2 = 5; // Relay2 pin
 const int relay3 = 6; // Relay3 pin
 const int relay4 = 7; // Relay4 pin
 const int peaksignal = 9; // Peak signal pin
-const int chargerstart = 1; // Charger start button
+const int chargerstart = 11; // Charger start button
 const int chargerstop = 12; // Charger stop button
 
 // variables
@@ -47,6 +48,17 @@ void setup()
   pinMode(chargerstop, OUTPUT);  // set the chargestop mode to OUTPUT
 }
 
+// Starting sequel for starting the charger
+void startingsequel(){
+digitalWrite(chargerstart, LOW); //start charger LONG PUSH
+delay(2000);
+digitalWrite(chargerstart, HIGH); //release button
+delay(4000);
+digitalWrite(chargerstart, LOW); //confirm okay SHORT PUSH
+delay(500);
+digitalWrite(chargerstart, HIGH); //release button
+}
+
 void loop()
 {
     digitalWrite(relay1, LOW); // make sure all the relays are resetted
@@ -62,16 +74,10 @@ void loop()
   // is the button pressed?
   // if it is, the startbuttonstate is HIGH:
   if (startbuttonstate == HIGH)
+  delay(500);
   {
     // START OF STAGE 1
-    delay(500);
-    digitalWrite(chargerstart, LOW); //start charger LONG PUSH
-    delay(2000);
-    digitalWrite(chargerstart, HIGH); //release button
-    delay(4000);
-    digitalWrite(chargerstart, LOW); //confirm okay SHORT PUSH
-    delay(500);
-    digitalWrite(chargerstart, HIGH); //release button
+    startingsequel()
     
     digitalWrite(led1Pin, HIGH); //turn on led1
     delay(2000);
@@ -90,13 +96,7 @@ void loop()
     digitalWrite(relay1, HIGH);  //SWITCH RELAY 1   
     digitalWrite(relay2, HIGH);  //SWITCH RELAY 2
     delay(500);
-    digitalWrite(chargerstart, LOW); //start charger LONG PUSH
-    delay(2000);
-    digitalWrite(chargerstart, HIGH); //release button
-    delay(4000);
-    digitalWrite(chargerstart, LOW); //confirm okay SHORT PUSH
-    delay(500);
-    digitalWrite(chargerstart, HIGH); //release button
+    startingsequel()
     
     digitalWrite(led1Pin, HIGH); //turn on led1
     digitalWrite(led2Pin, HIGH); //turn on led2
@@ -117,13 +117,7 @@ void loop()
     digitalWrite(relay3, HIGH);  //SWITCH RELAY 3   
     digitalWrite(relay4, HIGH);  //SWITCH RELAY 4
     delay(500);
-    digitalWrite(chargerstart, LOW); //start charger LONG PUSH
-    delay(2000);
-    digitalWrite(chargerstart, HIGH); //release button
-    delay(4000);
-    digitalWrite(chargerstart, LOW); //confirm okay SHORT PUSH
-    delay(500);
-    digitalWrite(chargerstart, HIGH); //release button
+    startingsequel()
 
     digitalWrite(led1Pin, HIGH); //turn on led1
     digitalWrite(led2Pin, HIGH); //turn on led2
@@ -141,11 +135,11 @@ void loop()
     delay(1000);
     //END OF STAGE 3
         
-        //FINISHED CHARGING, RESETTING RELAYS
-        digitalWrite(relay1, LOW);
-    	digitalWrite(relay2, LOW);
-    	digitalWrite(relay3, LOW);
-    	digitalWrite(relay4, LOW);
+    //FINISHED CHARGING, RESETTING RELAYS
+    digitalWrite(relay1, LOW);
+    digitalWrite(relay2, LOW);
+    digitalWrite(relay3, LOW);
+    digitalWrite(relay4, LOW);
   }
   else
   {
@@ -163,4 +157,3 @@ void loop()
 
   delay(500); // pause for 1/2 a second
 }
-
