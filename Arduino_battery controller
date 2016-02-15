@@ -13,9 +13,15 @@
       \|_______| \|__| \|__| \|_______| \|__| \|__| \|__| \|_______| \|_______| \|__|\|__| \|__| \|__| \|__| \|_______|
 
 CHARGER CONTROLLER FOR ELECTRIC MOTORBIKES with multiple battery packs.
-Version 0.2b
+Version 0.3
 Made by Mark MESZAROS, 2016
 */
+
+// include the LCD library code:
+include <LiquidCrystal.h>
+
+// initialize the library with the numbers of the interface pins
+LiquidCrystal lcd(A0, A1, A2, A3, A4, A5);
 
 // Constants used to set pin numbers
 const int startbutton = 10; // the number of the startbutton pin
@@ -46,6 +52,9 @@ void setup()
   pinMode(peaksignal, INPUT); // set the peaksignal mode to INPUT
   pinMode(chargerstart, OUTPUT);  // set the chargerstart mode to OUTPUT
   pinMode(chargerstop, OUTPUT);  // set the chargestop mode to OUTPUT
+  
+  // set up the LCD's number of columns and rows:
+  lcd.begin(16, 2);
 }
 
 // Starting sequel for starting the charger
@@ -59,6 +68,17 @@ delay(500);
 digitalWrite(chargerstart, HIGH); //release button
 }
 
+lcd.setCursor(0, 0);
+lcd.print("Fujiiengineering");
+lcd.setCursor(0, 1);
+lcd.print("Charger control");
+delay(2000);
+lcd.clear();
+lcd.setCursor(0, 0);  
+lcd.print("Device is ready");
+lcd.setCursor(0, 1); 
+lcd.print("Push to start");
+
 void loop()
 {
     digitalWrite(relay1, LOW); // make sure all the relays are resetted
@@ -68,7 +88,7 @@ void loop()
     
     digitalWrite(chargerstart, HIGH); // reset control button states
     digitalWrite(chargerstop, HIGH); // reset control button states
-    
+ 
   // get the state of the pushbutton
   startbuttonstate = digitalRead(startbutton);
   // is the button pressed?
@@ -76,13 +96,30 @@ void loop()
   if (startbuttonstate == HIGH)
   delay(500);
   {
+    lcd.clear();
+    lcd.setCursor(0, 0); 
+    lcd.print("Starting...");
+    lcd.setCursor(0, 1); 
+    lcd.print("Sequence 1");
     // START OF STAGE 1
-    startingsequel()
+    startingsequel();
     
     digitalWrite(led1Pin, HIGH); //turn on led1
     delay(2000);
-    
-    while(digitalRead(peaksignal) == HIGH) { }; //WAIT FOR PEAK SIGNAL
+    lcd.clear();
+    lcd.setCursor(0, 0); 
+    lcd.print("Sequence 1");
+    while(digitalRead(peaksignal) == HIGH) {
+    lcd.setCursor(0, 0);
+    lcd.print("Charging...");
+    lcd.setCursor(0, 1);
+    lcd.print(millis() / 1000);
+    }; //WAIT FOR PEAK SIGNAL
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Finishing...");
+    lcd.setCursor(0, 1);
+    lcd.print("Sequence 1");
     delay(2000);
     digitalWrite(chargerstop, LOW); //turn off charger SHORT PUSH
     delay(500);
@@ -92,11 +129,17 @@ void loop()
     delay(1000);
     //END OF STAGE 1
     
+    lcd.clear();
+    lcd.setCursor(0, 0); 
+    lcd.print("Starting...");
+    lcd.setCursor(0, 1); 
+    lcd.print("Sequence 2");
+    
     // START OF STAGE 2
     digitalWrite(relay1, HIGH);  //SWITCH RELAY 1   
-    digitalWrite(relay2, HIGH);  //SWITCH RELAY 2
+    digitalWrite(relay3, HIGH);  //SWITCH RELAY 3
     delay(500);
-    startingsequel()
+    startingsequel();
     
     digitalWrite(led1Pin, HIGH); //turn on led1
     digitalWrite(led2Pin, HIGH); //turn on led2
@@ -109,15 +152,16 @@ void loop()
     digitalWrite(chargerstop, HIGH); //release button
     
     digitalWrite(led1Pin, LOW); //turn off led1
+    digitalWrite(led2Pin, LOW); //turn off led2
     delay(1000);
     //END OF STAGE 2
 
 
     // START OF STAGE 3
-    digitalWrite(relay3, HIGH);  //SWITCH RELAY 3   
+    digitalWrite(relay2, HIGH);  //SWITCH RELAY 2   
     digitalWrite(relay4, HIGH);  //SWITCH RELAY 4
     delay(500);
-    startingsequel()
+    startingsequel();
 
     digitalWrite(led1Pin, HIGH); //turn on led1
     digitalWrite(led2Pin, HIGH); //turn on led2
@@ -134,12 +178,21 @@ void loop()
     digitalWrite(led3Pin, LOW); //turn off led3
     delay(1000);
     //END OF STAGE 3
-        
+    lcd.clear();
+    lcd.setCursor(0, 0); 
+    lcd.print("FINISHED!");
+    lcd.setCursor(0, 1); 
+    lcd.print("Total:");
+    lcd.setCursor(5, 1);
+    lcd.print("time");
+    
     //FINISHED CHARGING, RESETTING RELAYS
     digitalWrite(relay1, LOW);
     digitalWrite(relay2, LOW);
     digitalWrite(relay3, LOW);
     digitalWrite(relay4, LOW);
+    
+    while(digitalRead(startbutton) == LOW) { }; //WAIT FOR START BUTTON PUSH
   }
   else
   {
