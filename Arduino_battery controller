@@ -13,28 +13,28 @@
       \|_______| \|__| \|__| \|_______| \|__| \|__| \|__| \|_______| \|_______| \|__|\|__| \|__| \|__| \|__| \|_______|
 
 CHARGER CONTROLLER FOR ELECTRIC MOTORBIKES with multiple battery packs.
-Version 0.3
+Version 0.3b
 Made by Mark MESZAROS, 2016
 */
 
 // include the LCD library code:
-include <LiquidCrystal.h>
+#include <LiquidCrystal.h>
 
 // initialize the library with the numbers of the interface pins
-LiquidCrystal lcd(A0, A1, A2, A3, A4, A5);
+LiquidCrystal lcd(1, 2, 3, 4, 5, 6);
 
 // Constants used to set pin numbers
-const int startbutton = 10; // the number of the startbutton pin
-const int led1Pin = 1; // the number of the LED1 pin
-const int led2Pin = 2; // the number of the LED2 pin
-const int led3Pin = 3; // the number of the LED3 pin
-const int relay1 = 4; // Relay1 pin
-const int relay2 = 5; // Relay2 pin
-const int relay3 = 6; // Relay3 pin
-const int relay4 = 7; // Relay4 pin
-const int peaksignal = 9; // Peak signal pin
-const int chargerstart = 11; // Charger start button
-const int chargerstop = 12; // Charger stop button
+const int startbutton = A5; // the number of the startbutton pin
+const int led1Pin = 7; // the number of the LED1 pin
+const int led2Pin = 8; // the number of the LED2 pin
+const int led3Pin = 9; // the number of the LED3 pin
+const int relay1 = A0; // Relay1 pin
+const int relay2 = A1; // Relay2 pin
+const int relay3 = A2; // Relay3 pin
+const int relay4 = A3; // Relay4 pin
+const int peaksignal = A4; // Peak signal pin
+const int chargerstart = 10; // Charger start button
+const int chargerstop = 11; // Charger stop button
 
 // variables
 int startbuttonstate = 0; // variable the startbutton status
@@ -55,6 +55,16 @@ void setup()
   
   // set up the LCD's number of columns and rows:
   lcd.begin(16, 2);
+  lcd.setCursor(0, 0);
+  lcd.print("Fujiiengineering");
+  lcd.setCursor(0, 1);
+  lcd.print("Charger control");
+  delay(3000);
+  lcd.clear();
+  lcd.setCursor(0, 0);  
+  lcd.print("Device is ready");
+  lcd.setCursor(0, 1); 
+  lcd.print("Push to start");
 }
 
 // Starting sequel for starting the charger
@@ -68,33 +78,22 @@ delay(500);
 digitalWrite(chargerstart, HIGH); //release button
 }
 
-lcd.setCursor(0, 0);
-lcd.print("Fujiiengineering");
-lcd.setCursor(0, 1);
-lcd.print("Charger control");
-delay(2000);
-lcd.clear();
-lcd.setCursor(0, 0);  
-lcd.print("Device is ready");
-lcd.setCursor(0, 1); 
-lcd.print("Push to start");
-
 void loop()
 {
-    digitalWrite(relay1, LOW); // make sure all the relays are resetted
-    digitalWrite(relay2, LOW); // make sure all the relays are resetted
-    digitalWrite(relay3, LOW); // make sure all the relays are resetted
-    digitalWrite(relay4, LOW); // make sure all the relays are resetted
+  digitalWrite(relay1, LOW); // make sure all the relays are resetted
+  digitalWrite(relay2, LOW); // make sure all the relays are resetted
+  digitalWrite(relay3, LOW); // make sure all the relays are resetted
+  digitalWrite(relay4, LOW); // make sure all the relays are resetted
     
-    digitalWrite(chargerstart, HIGH); // reset control button states
-    digitalWrite(chargerstop, HIGH); // reset control button states
+  digitalWrite(chargerstart, HIGH); // reset control button states
+  digitalWrite(chargerstop, HIGH); // reset control button states
  
   // get the state of the pushbutton
   startbuttonstate = digitalRead(startbutton);
   // is the button pressed?
   // if it is, the startbuttonstate is HIGH:
   if (startbuttonstate == HIGH)
-  delay(500);
+
   {
     lcd.clear();
     lcd.setCursor(0, 0); 
